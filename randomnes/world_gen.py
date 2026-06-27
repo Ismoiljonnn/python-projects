@@ -35,7 +35,14 @@ def generate_world():
   current_event = "Welcome to the procedurally generated world!"
 
   while True:
-    print("\n" * 5)
+    print("\n" * 2)
+
+    print("=" * 40)
+    print(f"❤️ HP: {hp}/100 | 🍓 Berries: {inventory['berries']} | 🐟 Fish: {inventory['fish']}")
+    print(f"Seed: {user_seed} | Coordinates: ({p_x}, {p_y})")
+    print("=" * 40 + "\n")
+
+    print("\n * 2")
 
     for y in range(size):
       row_display = []

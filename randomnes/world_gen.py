@@ -1,4 +1,5 @@
 import random
+import os
 
 def generate_world():
   user_seed = input("Seed required: ")
@@ -35,6 +36,7 @@ def generate_world():
   current_event = "Welcome to the procedurally generated world!"
 
   while True:
+    os.system('cls' if os.name == 'nt' else 'clear')
     print("\n" * 2)
 
     print("=" * 40)

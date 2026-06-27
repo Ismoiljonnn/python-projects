@@ -43,6 +43,31 @@ def generate_world():
       print(" ".join(row_display))
 
     current_tile = world_map[p_y][p_x]
+    tile_seed = f"{user_seed}_{p_x}_{p_y}"
+    random.seed(tile_seed) 
+    
+    event_chance = random.random()
+    print("-" * 30)
+    if current_tile == "~": # Suvda bo'lsa
+        if event_chance < 0.3:
+            print("Event: Siz daxshatli akulani ko'rib qoldingiz! 🦈")
+        elif event_chance < 0.7:
+            print("Event: Oltin baliq tutib oldingiz! 🐟")
+        else:
+            print("Event: Suv tinch, suzishda davom eting. 🌊")
+            
+    elif current_tile == "♠": # O'rmonda bo'lsa
+        if event_chance < 0.4:
+            print("Event: Daraxt ortidan bo'ri chiqib keldi! 🐺")
+        else:
+            print("Event: Bir dunyo rezavor mevalar topdingiz. 🍓")
+            
+    elif current_tile == "▲": # Tog'da bo'lsa
+        print("Event: Tog' havosi judayam sovuq, ehtiyot bo'ling! 🏔️")
+    else:
+        print("Event: Tekislikda tinchlikalik. Hech qanday xavf yo'q. 🌾")
+    print("-" * 30)
+
     print(f"\nCurrent zone: {current_tile}")
     
     move = input("Moving: (w: up, s: down, a: left, d: right, q: quit)").lower()

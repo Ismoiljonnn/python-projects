@@ -87,6 +87,9 @@ def generate_world():
     print("\n" + "-" * 40)
     print(current_event)
     print("-" * 40)
+    if hp <= 0:
+        print("\n💀 YOU DIED! Game Over. 💀")
+        break
 
     print(f"\nCurrent zone: {current_tile}")
     

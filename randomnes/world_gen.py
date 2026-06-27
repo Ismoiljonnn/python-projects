@@ -43,29 +43,30 @@ def generate_world():
       print(" ".join(row_display))
 
     current_tile = world_map[p_y][p_x]
+    # Unique seed for each tile to lock the event logic
     tile_seed = f"{user_seed}_{p_x}_{p_y}"
     random.seed(tile_seed) 
     
     event_chance = random.random()
     print("-" * 30)
-    if current_tile == "~": # Suvda bo'lsa
+    if current_tile == "~": # Water
         if event_chance < 0.3:
-            print("Event: Siz daxshatli akulani ko'rib qoldingiz! 🦈")
+            print("Event: You spotted a terrifying shark! 🦈")
         elif event_chance < 0.7:
-            print("Event: Oltin baliq tutib oldingiz! 🐟")
+            print("Event: You caught a golden fish! 🐟")
         else:
-            print("Event: Suv tinch, suzishda davom eting. 🌊")
+            print("Event: The water is calm, keep swimming. 🌊")
             
-    elif current_tile == "♠": # O'rmonda bo'lsa
+    elif current_tile == "♠": # Forest
         if event_chance < 0.4:
-            print("Event: Daraxt ortidan bo'ri chiqib keldi! 🐺")
+            print("Event: A wild wolf emerged from behind the trees! 🐺")
         else:
-            print("Event: Bir dunyo rezavor mevalar topdingiz. 🍓")
+            print("Event: You found a bunch of wild berries. 🍓")
             
-    elif current_tile == "▲": # Tog'da bo'lsa
-        print("Event: Tog' havosi judayam sovuq, ehtiyot bo'ling! 🏔️")
-    else:
-        print("Event: Tekislikda tinchlikalik. Hech qanday xavf yo'q. 🌾")
+    elif current_tile == "▲": # Mountain
+        print("Event: The mountain air is freezing, stay cautious! 🏔️")
+    else: # Plains
+        print("Event: The plains are peaceful. No danger here. 🌾")
     print("-" * 30)
 
     print(f"\nCurrent zone: {current_tile}")

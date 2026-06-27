@@ -30,6 +30,10 @@ def generate_world():
 
   p_x, p_y = 7,7
 
+  hp = 100
+  inventory = {"berries": 0, "fish": 0}
+  current_event = "Welcome to the procedurally generated world!"
+
   while True:
     print("\n" * 5)
 

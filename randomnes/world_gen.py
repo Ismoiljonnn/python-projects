@@ -60,25 +60,33 @@ def generate_world():
     
     event_chance = random.random()
     print("-" * 30)
-    if current_tile == "~": # Water
+    if current_tile == "~":
         if event_chance < 0.3:
-            print("Event: You spotted a terrifying shark! 🦈")
+            current_event = "Event: You spotted a terrifying shark! HP -20 🦈"
+            hp -= 20
         elif event_chance < 0.7:
-            print("Event: You caught a golden fish! 🐟")
+            current_event = "Event: You caught a golden fish! Fish +1 🐟"
+            inventory["fish"] += 1
         else:
-            print("Event: The water is calm, keep swimming. 🌊")
+            current_event = "Event: The water is calm, keep swimming. 🌊"
             
-    elif current_tile == "♠": # Forest
+    elif current_tile == "♠":
         if event_chance < 0.4:
-            print("Event: A wild wolf emerged from behind the trees! 🐺")
+            current_event = "Event: A wild wolf emerged! HP -15 🐺"
+            hp -= 15
         else:
-            print("Event: You found a bunch of wild berries. 🍓")
+            current_event = "Event: You found some wild berries. Berries +1 🍓"
+            inventory["berries"] += 1
             
-    elif current_tile == "▲": # Mountain
-        print("Event: The mountain air is freezing, stay cautious! 🏔️")
-    else: # Plains
-        print("Event: The plains are peaceful. No danger here. 🌾")
-    print("-" * 30)
+    elif current_tile == "▲":
+        current_event = "Event: The mountain air is freezing! HP -5 🏔️"
+        hp -= 5
+    else:
+        current_event = "Event: The plains are peaceful. No danger here. 🌾"
+
+    print("\n" + "-" * 40)
+    print(current_event)
+    print("-" * 40)
 
     print(f"\nCurrent zone: {current_tile}")
     

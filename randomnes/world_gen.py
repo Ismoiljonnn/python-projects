@@ -45,7 +45,7 @@ def generate_world():
     current_tile = world_map[p_y][p_x]
     print(f"\nCurrent zone: {current_tile}")
     
-    move = input("Moving: (w: up, s: down, a: left, d: right, q: quit)").lower
+    move = input("Moving: (w: up, s: down, a: left, d: right, q: quit)").lower()
 
     if move == 'q':
       print("game over")

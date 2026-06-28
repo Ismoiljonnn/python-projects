@@ -194,7 +194,7 @@ def main():
         
         # Matnlarni alohida qatorlarga va aniq koordinatalarga joylashtiramiz (Ustma-ust tushmaydi)
         status_text = f"❤️ HP: {hp}/100   |   🍖 Hunger: {hunger}/100   |   🍓 Berries: {inventory['berries']}   |   🐟 Fish: {inventory['fish']}"
-        control_text = f"Seed: {user_seed}  |  WASD - Move  |  E - Eat  |  ESC - Exit"
+        control_text = f"STRANDED SEED  |  Seed: {user_seed}  |  WASD - Move  |  E - Eat  |  ESC - Exit"
         
         ui_status = font.render(status_text, True, (240, 240, 240))
         ui_event = font.render(current_event, True, (0, 255, 150) if "ate" in current_event or "caught" in current_event else (230, 230, 230))

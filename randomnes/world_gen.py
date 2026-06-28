@@ -104,7 +104,7 @@ def generate_world():
 
     print(f"\nCurrent zone: {current_tile}")
     
-    move = input("Moving: (w: up, s: down, a: left, d: right, q: quit)").lower()
+    move = input("Moving: (w: up, s: down, a: left, d: right, e: eat, q: quit)").lower()
 
     if move == 'q':
       print("game over")

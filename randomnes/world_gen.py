@@ -94,7 +94,7 @@ def generate_world():
 
     # Agar och qolsa, HP ketadi
     if hunger <= 0:
-      current_event += " (You are hungry! HP -10 💢)"
+      current_event += " (You are starving! HP -10 💢)"
       hp -= 10
     print("-" * 40)
 

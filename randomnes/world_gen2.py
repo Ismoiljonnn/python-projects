@@ -46,7 +46,13 @@ def main():
     user_seed = input("Seed required: ")
     world_map = generate_world_data(user_seed)
     
-    p_x, p_y = 7, 7 # Boshlang'ich pozitsiya
+    p_x, p_y = 7, 7
+    
+    hp = 100
+    hunger = 100
+    inventory = {"berries": 0, "fish": 0}
+    current_event = "Welcome to the procedurally generated world!"
+    size = MAP_SIZE  # xarita o'lchami sharti uchun
     
     # O'yinning asosiy sikli
     while True:
@@ -73,6 +79,19 @@ def main():
                     color = COLORS["X"]
                     
                 pygame.draw.rect(screen, color, (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+
+        # Pastki UI panel uchun qora to'rtburchak chizish
+        pygame.draw.rect(screen, (0, 0, 0), (0, MAP_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))
+        
+        # Terminaldagi mantiq asosida matnlarni tayyorlash
+        hp_text = font.render(f"HP: {hp}/100", True, (255, 50, 50))       # Qizil matn
+        hunger_text = font.render(f"Hunger: {hunger}/100", True, (255, 165, 0)) # To'q sariq
+        event_text = font.render(current_event, True, (255, 255, 255))    # Oq matn
+        
+        # Matnlarni ekrandagi koordinatalariga joylashtirish
+        screen.blit(hp_text, (20, MAP_HEIGHT + 15))
+        screen.blit(hunger_text, (180, MAP_HEIGHT + 15))
+        screen.blit(event_text, (20, MAP_HEIGHT + 50))
 
         pygame.display.flip()
 

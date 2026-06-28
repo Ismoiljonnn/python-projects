@@ -63,10 +63,60 @@ def main():
             
             # Tugmalar bosilishini tekshirish
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w and p_y > 0: p_y -= 1
-                elif event.key == pygame.K_s and p_y < MAP_SIZE - 1: p_y += 1
-                elif event.key == pygame.K_a and p_x > 0: p_x -= 1
-                elif event.key == pygame.K_d and p_x < MAP_SIZE - 1: p_x += 1
+                moved = False
+                if event.key == pygame.K_w and p_y > 0: 
+                    p_y -= 1
+                    moved = True
+                elif event.key == pygame.K_s and p_y < MAP_SIZE - 1: 
+                    p_y += 1
+                    moved = True
+                elif event.key == pygame.K_a and p_x > 0: 
+                    p_x -= 1
+                    moved = True
+                elif event.key == pygame.K_d and p_x < MAP_SIZE - 1: 
+                    p_x += 1
+                    moved = True
+                
+                # Agar o'yinchi haqiqatdan ham qadam bosgan bo'lsa
+                if moved:
+                    hunger = max(0, hunger - 5)
+                    if hunger <= 0:
+                        hp -= 10
+                        starving_msg = " (You are starving! HP -10 💢)"
+                    else:
+                        starving_msg = ""
+
+                    # Tile seed va voqea mantig'i (Terminal kodingizdan olindi)
+                    current_tile = world_map[p_y][p_x]
+                    tile_seed = f"{user_seed}_{p_x}_{p_y}"
+                    random.seed(tile_seed)
+                    event_chance = random.random()
+
+                    if current_tile == "~":
+                        if event_chance < 0.3:
+                            current_event = f"Event: You spotted a terrifying shark! HP -20 🦈{starving_msg}"
+                            hp -= 20
+                        elif event_chance < 0.7:
+                            current_event = f"Event: You caught a golden fish! Fish +1 🐟{starving_msg}"
+                            inventory["fish"] += 1
+                        else:
+                            current_event = f"Event: The water is calm. 🌊{starving_msg}"
+                    elif current_tile == "♠":
+                        if event_chance < 0.4:
+                            current_event = f"Event: A wild wolf emerged! HP -15 🐺{starving_msg}"
+                            hp -= 15
+                        else:
+                            current_event = f"Event: You found some wild berries. Berries +1 🍓{starving_msg}"
+                            inventory["berries"] += 1
+                    elif current_tile == "▲":
+                        current_event = f"Event: The mountain air is freezing! HP -5 🏔️{starving_msg}"
+                        hp -= 5
+                    else:
+                        current_event = f"Event: The plains are peaceful. 🌾{starving_msg}"
+                    
+                    # HP nolga tushsa o'yinni to'xtatish sharti
+                    if hp <= 0:
+                        current_event = "💀 YOU DIED! Game Over. 💀"
 
         # Xaritani qayta chizish
         for y in range(MAP_SIZE):

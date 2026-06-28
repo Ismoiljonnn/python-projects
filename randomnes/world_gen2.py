@@ -130,12 +130,42 @@ def main():
         screen.fill((0, 0, 0))
         
         # Xaritani markazlashtirilgan offset bilan chizish
+        # Xaritani markazlashtirilgan offset bilan chizish
         for y in range(MAP_SIZE):
             for x in range(MAP_SIZE):
                 tile_type = world_map[y][x]
-                color = COLORS[tile_type] if not (x == p_x and y == p_y) else COLORS["X"]
+                is_player = (x == p_x and y == p_y)
                 
-                pygame.draw.rect(screen, color, (X_OFFSET + x * TILE_SIZE, Y_OFFSET + y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1))
+                color = COLORS[tile_type] if not is_player else COLORS["X"]
+                rect_coords = (X_OFFSET + x * TILE_SIZE, Y_OFFSET + y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1)
+                
+                # Katakni chizamiz
+                pygame.draw.rect(screen, color, rect_coords)
+
+                # 💡 YANGI: Kataklarni tushunarli qilish uchun ustiga simvol chizamiz
+                symbol_font = pygame.font.SysFont("Arial", int(TILE_SIZE * 0.5), bold=True)
+                
+                if is_player:
+                    char = "P"  # Player (Qahramon)
+                    char_color = (255, 255, 255)
+                elif tile_type == "~":
+                    char = "W"  # Water (Suv)
+                    char_color = (15, 60, 100)
+                elif tile_type == ".":
+                    char = "L"  # Land (Qum/Tekislik)
+                    char_color = (140, 110, 70)
+                elif tile_type == "♠":
+                    char = "F"  # Forest (O'rmon)
+                    char_color = (10, 70, 10)
+                elif tile_type == "▲":
+                    char = "M"  # Mountain (Tog')
+                    char_color = (50, 60, 70)
+                
+                # Simvol matnini render qilib, katakning qoq markaziga joylashtiramiz
+                char_surface = symbol_font.render(char, True, char_color)
+                text_x = X_OFFSET + x * TILE_SIZE + (TILE_SIZE - char_surface.get_width()) // 2
+                text_y = Y_OFFSET + y * TILE_SIZE + (TILE_SIZE - char_surface.get_height()) // 2
+                screen.blit(char_surface, (text_x, text_y))
 
         # Dynamic Pastki UI Panel
         pygame.draw.rect(screen, (15, 15, 15), (0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))

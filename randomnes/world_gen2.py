@@ -3,9 +3,12 @@ import random
 import sys
 
 # O'yin oynasi o'lchamlari
-TILE_SIZE = 40  # Har bitta katakning kattaligi (pikselda)
+TILE_SIZE = 40
 MAP_SIZE = 15
-SCREEN_SIZE = TILE_SIZE * MAP_SIZE
+MAP_HEIGHT = TILE_SIZE * MAP_SIZE  # 600 piksel xarita uchun
+UI_HEIGHT = 100                    # 100 piksel matnlar uchun pastki panel
+SCREEN_WIDTH = TILE_SIZE * MAP_SIZE
+SCREEN_HEIGHT = MAP_HEIGHT + UI_HEIGHT
 
 # Ranglar palitrasi (Hozircha rasmlar o'rniga ranglar bilan chizamiz)
 COLORS = {

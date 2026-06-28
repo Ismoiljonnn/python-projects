@@ -36,8 +36,12 @@ def generate_world_data(seed_val):
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((SCREEN_SIZE, SCREEN_SIZE))
-    pygame.display.set_caption("Procedural World UI")
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Procedural World UI v2.0")
+    
+    # Shrift tizimini yoqish
+    pygame.font.init()
+    font = pygame.font.SysFont("Arial", 20)
     
     user_seed = input("Seed required: ")
     world_map = generate_world_data(user_seed)

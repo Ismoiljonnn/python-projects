@@ -32,6 +32,7 @@ def generate_world():
   p_x, p_y = 7,7
 
   hp = 100
+  hunger = 100
   inventory = {"berries": 0, "fish": 0}
   current_event = "Welcome to the procedurally generated world!"
 
@@ -40,7 +41,7 @@ def generate_world():
     print("\n" * 2)
 
     print("=" * 40)
-    print(f"❤️ HP: {hp}/100 | 🍓 Berries: {inventory['berries']} | 🐟 Fish: {inventory['fish']}")
+    print(f"❤️ HP: {hp}/100 | 🍖 Hunger: {hunger}/100 | 🍓 Berries: {inventory['berries']} | 🐟 Fish: {inventory['fish']}")
     print(f"Seed: {user_seed} | Coordinates: ({p_x}, {p_y})")
     print("=" * 40 + "\n")
 
@@ -88,10 +89,18 @@ def generate_world():
 
     print("\n" + "-" * 40)
     print(current_event)
+
+    hunger = max(0, hunger - 5)
+
+    # Agar och qolsa, HP ketadi
+    if hunger <= 0:
+      current_event += " (You are hungry! HP -10 💢)"
+      hp -= 10
     print("-" * 40)
+
     if hp <= 0:
-        print("\n💀 YOU DIED! Game Over. 💀")
-        break
+      print("\n💀 YOU DIED! Game Over. 💀")
+      break
 
     print(f"\nCurrent zone: {current_tile}")
     
@@ -99,6 +108,19 @@ def generate_world():
 
     if move == 'q':
       print("game over")
+    elif move == 'e':  # <--- Eat command
+      if inventory["berries"] > 0:
+        inventory["berries"] -= 1
+        hunger = min(100, hunger + 20)
+        hp = min(100, hp + 5)
+        current_event = "Event: You ate delicious berries! Hunger +20, HP +5 🍓"
+      elif inventory["fish"] > 0:
+        inventory["fish"] -= 1
+        hunger = min(100, hunger + 40)
+        hp = min(100, hp + 15)
+        current_event = "Event: You cooked and ate a fish! Hunger +40, HP +15 🐟"
+      else:
+          current_event = "Event: Your inventory is empty! Nothing to eat. 🎒"
     elif move == 'w' and p_y > 0:
       p_y -= 1
     elif move == 's' and p_y < size - 1:

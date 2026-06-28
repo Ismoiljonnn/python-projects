@@ -2,7 +2,7 @@ import pygame
 import random
 import sys
 
-# O'yin oynasi o'lchamlari (Boshlang'ich va xarita o'lchamlari)
+# O'yin xaritasi o'lchami
 MAP_SIZE = 15
 
 # Ranglar palitrasi
@@ -30,11 +30,9 @@ def generate_world_data(seed_val):
     return world_map
 
 def get_seed_from_ui():
-    """Grafik oynada foydalanuvchidan seed matnini qabul qiluvchi funksiya"""
     pygame.init()
     pygame.font.init()
     
-    # Boshlang'ich menyu oynasi o'lchami
     menu_width, menu_height = 600, 400
     screen = pygame.display.set_mode((menu_width, menu_height))
     pygame.display.set_caption("Enter Seed to Begin Strategy")
@@ -46,17 +44,14 @@ def get_seed_from_ui():
     menu_running = True
     
     while menu_running:
-        screen.fill((20, 20, 25)) # To'q fon
+        screen.fill((20, 20, 25))
         
-        # UI Matnlari
         title_surf = font_large.render("PROCEDURAL WORLD GENERATOR", True, (0, 255, 150))
         prompt_surf = font_small.render("Enter Seed text and press ENTER:", True, (200, 200, 200))
         
-        # Kiritilayotgan matn qutisi (box)
         pygame.draw.rect(screen, (40, 40, 50), (100, 200, 400, 50), border_radius=5)
         seed_surf = font_small.render(user_seed + "|", True, (255, 255, 255))
         
-        # Chizish koordinatalari
         screen.blit(title_surf, ((menu_width - title_surf.get_width()) // 2, 60))
         screen.blit(prompt_surf, (100, 160))
         screen.blit(seed_surf, (115, 212))
@@ -71,39 +66,39 @@ def get_seed_from_ui():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-                elif event.key == pygame.K_RETURN: # Enter bosilganda
+                elif event.key == pygame.K_RETURN:
                     if user_seed.strip() != "":
                         menu_running = False
-                elif event.key == pygame.K_BACKSPACE: # O'chirish
+                elif event.key == pygame.K_BACKSPACE:
                     user_seed = user_seed[:-1]
                 else:
-                    # Faqat harflar va sonlarni qabul qilish
                     if len(user_seed) < 15 and event.unicode.isprintable():
                         user_seed += event.unicode
                         
     return user_seed
 
 def main():
-    # 🌟 1-QADAM: Birinchi UI orqali Seed so'raymiz
     user_seed = get_seed_from_ui()
     
-    # 🌟 2-QADAM: Monitor o'lchamlarini olib Full Screen-ga o'tamiz
-    monitor_info = pygame.display.Info()
-    SCREEN_WIDTH = monitor_info.current_w
-    SCREEN_HEIGHT = monitor_info.current_h
+    # 🖥️ FULL SCREEN DINAMIK MASSOFTALAR
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size() # Ekranning aniq piksellarini olamiz
     
-    UI_HEIGHT = 120
+    # UI panel balandligi dinamik ravishda ekranning 15% qismini egallaydi
+    UI_HEIGHT = int(SCREEN_HEIGHT * 0.15)
     MAP_DISPLAY_HEIGHT = SCREEN_HEIGHT - UI_HEIGHT
     
-    TILE_SIZE = min(SCREEN_WIDTH // MAP_SIZE, MAP_DISPLAY_HEIGHT // MAP_SIZE)
+    # Katak o'lchami xarita ekranga to'liq sig'ishi uchun hisoblanadi
+    TILE_SIZE = min(SCREEN_WIDTH // (MAP_SIZE + 2), MAP_DISPLAY_HEIGHT // (MAP_SIZE + 1))
+    
+    # Xaritaning o'zini qat'iy markazlashtirish (Xarita siqilib qolmasligi uchun)
     X_OFFSET = (SCREEN_WIDTH - (MAP_SIZE * TILE_SIZE)) // 2
     Y_OFFSET = (MAP_DISPLAY_HEIGHT - (MAP_SIZE * TILE_SIZE)) // 2
 
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
-    pygame.display.set_caption("Procedural World UI v3.0 - Full Screen")
-    
-    font = pygame.font.SysFont("Arial", 24)
-    symbol_font = pygame.font.SysFont("Arial", int(TILE_SIZE * 0.4), bold=True)
+    # Shrift o'lchamlarini ekran aniqligiga qarab moslashtirish
+    font_size = max(16, int(SCREEN_HEIGHT * 0.022)) # Har qanday ekranda matn sig'ishi uchun
+    font = pygame.font.SysFont("Arial", font_size, bold=True)
+    symbol_font = pygame.font.SysFont("Arial", int(TILE_SIZE * 0.45), bold=True)
     
     # O'yin o'zgaruvchilari
     world_map = generate_world_data(user_seed)
@@ -168,9 +163,9 @@ def main():
                     
                     if hp <= 0: current_event = "💀 YOU DIED! Game Over. Press ESC to quit. 💀"
 
-        screen.fill((0, 0, 0))
+        screen.fill((10, 10, 12)) # Chuqur qora kosmik fon
         
-        # Xaritani simvollar bilan chizish
+        # Xaritani chizish (Y_OFFSET yordamida vertikal markazda turadi)
         for y in range(MAP_SIZE):
             for x in range(MAP_SIZE):
                 tile_type = world_map[y][x]
@@ -181,34 +176,34 @@ def main():
                 
                 pygame.draw.rect(screen, color, rect_coords)
 
-                # Katak simvollari (Tushunarli qilish uchun)
-                if is_player:
-                    char, char_color = "P", (255, 255, 255)
-                elif tile_type == "~":
-                    char, char_color = "W", (15, 60, 100)
-                elif tile_type == ".":
-                    char, char_color = "L", (140, 110, 70)
-                elif tile_type == "♠":
-                    char, char_color = "F", (10, 70, 10)
-                elif tile_type == "▲":
-                    char, char_color = "M", (50, 60, 70)
+                # Katak simvollari
+                if is_player: char, char_color = "P", (255, 255, 255)
+                elif tile_type == "~": char, char_color = "W", (15, 60, 100)
+                elif tile_type == ".": char, char_color = "L", (140, 110, 70)
+                elif tile_type == "♠": char, char_color = "F", (10, 70, 10)
+                elif tile_type == "▲": char, char_color = "M", (50, 60, 70)
                 
                 char_surface = symbol_font.render(char, True, char_color)
                 text_x = X_OFFSET + x * TILE_SIZE + (TILE_SIZE - char_surface.get_width()) // 2
                 text_y = Y_OFFSET + y * TILE_SIZE + (TILE_SIZE - char_surface.get_height()) // 2
                 screen.blit(char_surface, (text_x, text_y))
 
-        # Dynamic Pastki UI Panel
-        pygame.draw.rect(screen, (15, 15, 15), (0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))
+        # Dynamic Pastki UI Panel (Ekranning eng pastki qismida)
+        pygame.draw.rect(screen, (20, 20, 25), (0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))
+        pygame.draw.line(screen, (40, 40, 50), (0, SCREEN_HEIGHT - UI_HEIGHT), (SCREEN_WIDTH, SCREEN_HEIGHT - UI_HEIGHT), 2)
         
+        # Matnlarni alohida qatorlarga va aniq koordinatalarga joylashtiramiz (Ustma-ust tushmaydi)
         status_text = f"❤️ HP: {hp}/100   |   🍖 Hunger: {hunger}/100   |   🍓 Berries: {inventory['berries']}   |   🐟 Fish: {inventory['fish']}"
-        ui_status = font.render(status_text, True, (240, 240, 240))
-        ui_event = font.render(current_event, True, (0, 255, 150) if "ate" in current_event or "caught" in current_event else (255, 255, 255))
-        ui_control = font.render(f"Seed: {user_seed} | WASD - Move | E - Eat | ESC - Exit", True, (150, 150, 150))
+        control_text = f"Seed: {user_seed}  |  WASD - Move  |  E - Eat  |  ESC - Exit"
         
-        screen.blit(ui_status, (40, SCREEN_HEIGHT - UI_HEIGHT + 20))
-        screen.blit(ui_event, (40, SCREEN_HEIGHT - UI_HEIGHT + 55))
-        screen.blit(ui_control, (SCREEN_WIDTH - 500, SCREEN_HEIGHT - UI_HEIGHT + 20))
+        ui_status = font.render(status_text, True, (240, 240, 240))
+        ui_event = font.render(current_event, True, (0, 255, 150) if "ate" in current_event or "caught" in current_event else (230, 230, 230))
+        ui_control = font.render(control_text, True, (130, 130, 140))
+        
+        # Joylashtirish piksellari dinamik hisoblanadi
+        screen.blit(ui_status, (40, SCREEN_HEIGHT - UI_HEIGHT + int(UI_HEIGHT * 0.2)))
+        screen.blit(ui_event, (40, SCREEN_HEIGHT - UI_HEIGHT + int(UI_HEIGHT * 0.55)))
+        screen.blit(ui_control, (SCREEN_WIDTH - ui_control.get_width() - 40, SCREEN_HEIGHT - UI_HEIGHT + int(UI_HEIGHT * 0.2)))
 
         pygame.display.flip()
 

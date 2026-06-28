@@ -45,7 +45,7 @@ def generate_world():
     print(f"Seed: {user_seed} | Coordinates: ({p_x}, {p_y})")
     print("=" * 40 + "\n")
 
-    print("\n * 2")
+    print("\n" * 2)
 
     for y in range(size):
       row_display = []

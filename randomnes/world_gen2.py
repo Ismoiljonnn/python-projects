@@ -35,7 +35,7 @@ def get_seed_from_ui():
     
     menu_width, menu_height = 600, 400
     screen = pygame.display.set_mode((menu_width, menu_height))
-    pygame.display.set_caption("Enter Seed to Begin Strategy")
+    pygame.display.set_caption("Stranded seed")
     
     font_large = pygame.font.SysFont("Arial", 32, bold=True)
     font_small = pygame.font.SysFont("Arial", 24)

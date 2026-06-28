@@ -2,15 +2,10 @@ import pygame
 import random
 import sys
 
-# O'yin oynasi o'lchamlari
-TILE_SIZE = 40
+# O'yin oynasi o'lchamlari (Boshlang'ich va xarita o'lchamlari)
 MAP_SIZE = 15
-MAP_HEIGHT = TILE_SIZE * MAP_SIZE  # 600 piksel xarita uchun
-UI_HEIGHT = 100                    # 100 piksel matnlar uchun pastki panel
-SCREEN_WIDTH = TILE_SIZE * MAP_SIZE
-SCREEN_HEIGHT = MAP_HEIGHT + UI_HEIGHT
 
-# Ranglar palitrasi (Hozircha rasmlar o'rniga ranglar bilan chizamiz)
+# Ranglar palitrasi
 COLORS = {
     "~": (28, 107, 160),   # Moviy suv
     ".": (214, 185, 141),  # Qumloq yer
@@ -34,41 +29,89 @@ def generate_world_data(seed_val):
         world_map.append(row)
     return world_map
 
-def main():
+def get_seed_from_ui():
+    """Grafik oynada foydalanuvchidan seed matnini qabul qiluvchi funksiya"""
     pygame.init()
     pygame.font.init()
     
-    # 🖥️ FULL SCREEN SOZLAMASI
-    # Ekranning haqiqiy o'lchamlarini aniqlab olamiz
+    # Boshlang'ich menyu oynasi o'lchami
+    menu_width, menu_height = 600, 400
+    screen = pygame.display.set_mode((menu_width, menu_height))
+    pygame.display.set_caption("Enter Seed to Begin Strategy")
+    
+    font_large = pygame.font.SysFont("Arial", 32, bold=True)
+    font_small = pygame.font.SysFont("Arial", 24)
+    
+    user_seed = ""
+    menu_running = True
+    
+    while menu_running:
+        screen.fill((20, 20, 25)) # To'q fon
+        
+        # UI Matnlari
+        title_surf = font_large.render("PROCEDURAL WORLD GENERATOR", True, (0, 255, 150))
+        prompt_surf = font_small.render("Enter Seed text and press ENTER:", True, (200, 200, 200))
+        
+        # Kiritilayotgan matn qutisi (box)
+        pygame.draw.rect(screen, (40, 40, 50), (100, 200, 400, 50), border_radius=5)
+        seed_surf = font_small.render(user_seed + "|", True, (255, 255, 255))
+        
+        # Chizish koordinatalari
+        screen.blit(title_surf, ((menu_width - title_surf.get_width()) // 2, 60))
+        screen.blit(prompt_surf, (100, 160))
+        screen.blit(seed_surf, (115, 212))
+        
+        pygame.display.flip()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_RETURN: # Enter bosilganda
+                    if user_seed.strip() != "":
+                        menu_running = False
+                elif event.key == pygame.K_BACKSPACE: # O'chirish
+                    user_seed = user_seed[:-1]
+                else:
+                    # Faqat harflar va sonlarni qabul qilish
+                    if len(user_seed) < 15 and event.unicode.isprintable():
+                        user_seed += event.unicode
+                        
+    return user_seed
+
+def main():
+    # 🌟 1-QADAM: Birinchi UI orqali Seed so'raymiz
+    user_seed = get_seed_from_ui()
+    
+    # 🌟 2-QADAM: Monitor o'lchamlarini olib Full Screen-ga o'tamiz
     monitor_info = pygame.display.Info()
     SCREEN_WIDTH = monitor_info.current_w
     SCREEN_HEIGHT = monitor_info.current_h
     
-    # UI panel uchun joy ajratamiz, qolgani to'liq xarita bo'ladi
     UI_HEIGHT = 120
     MAP_DISPLAY_HEIGHT = SCREEN_HEIGHT - UI_HEIGHT
     
-    # Kataklar o'lchamini ekranga moslab dinamik hisoblaymiz
     TILE_SIZE = min(SCREEN_WIDTH // MAP_SIZE, MAP_DISPLAY_HEIGHT // MAP_SIZE)
-    
-    # Xaritani markazlashtirish uchun chekka bo'shliqlar (Offset)
     X_OFFSET = (SCREEN_WIDTH - (MAP_SIZE * TILE_SIZE)) // 2
     Y_OFFSET = (MAP_DISPLAY_HEIGHT - (MAP_SIZE * TILE_SIZE)) // 2
 
-    # Full screen oynasini ochamiz
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
     pygame.display.set_caption("Procedural World UI v3.0 - Full Screen")
     
     font = pygame.font.SysFont("Arial", 24)
+    symbol_font = pygame.font.SysFont("Arial", int(TILE_SIZE * 0.4), bold=True)
     
     # O'yin o'zgaruvchilari
-    user_seed = input("Seed required: ")
     world_map = generate_world_data(user_seed)
     p_x, p_y = 7, 7
     hp = 100
     hunger = 100
-    inventory = {"berries": 2, "fish": 1} # Sinov uchun boshlang'ich zaxira
-    current_event = "Welcome, Ser! Explore using WASD. Press 'E' to eat food."
+    inventory = {"berries": 2, "fish": 1}
+    current_event = f"Welcome, Ser! Seed '{user_seed}' applied. Explore using WASD."
     
     while True:
         for event in pygame.event.get():
@@ -77,13 +120,12 @@ def main():
                 sys.exit()
                 
             elif event.type == pygame.KEYDOWN:
-                # O'yindan chiqish xavfsizlik tugmasi (Escape)
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
                     
                 moved = False
-                # EAT MEXANIKASI (Aktivlashtirildi 🍓/🐟)
+                # EAT MEXANIKASI
                 if event.key == pygame.K_e:
                     if inventory["berries"] > 0:
                         inventory["berries"] -= 1
@@ -126,11 +168,9 @@ def main():
                     
                     if hp <= 0: current_event = "💀 YOU DIED! Game Over. Press ESC to quit. 💀"
 
-        # Ekranni tozalash (Orqa fon qora)
         screen.fill((0, 0, 0))
         
-        # Xaritani markazlashtirilgan offset bilan chizish
-        # Xaritani markazlashtirilgan offset bilan chizish
+        # Xaritani simvollar bilan chizish
         for y in range(MAP_SIZE):
             for x in range(MAP_SIZE):
                 tile_type = world_map[y][x]
@@ -139,29 +179,20 @@ def main():
                 color = COLORS[tile_type] if not is_player else COLORS["X"]
                 rect_coords = (X_OFFSET + x * TILE_SIZE, Y_OFFSET + y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1)
                 
-                # Katakni chizamiz
                 pygame.draw.rect(screen, color, rect_coords)
 
-                # 💡 YANGI: Kataklarni tushunarli qilish uchun ustiga simvol chizamiz
-                symbol_font = pygame.font.SysFont("Arial", int(TILE_SIZE * 0.5), bold=True)
-                
+                # Katak simvollari (Tushunarli qilish uchun)
                 if is_player:
-                    char = "P"  # Player (Qahramon)
-                    char_color = (255, 255, 255)
+                    char, char_color = "P", (255, 255, 255)
                 elif tile_type == "~":
-                    char = "W"  # Water (Suv)
-                    char_color = (15, 60, 100)
+                    char, char_color = "W", (15, 60, 100)
                 elif tile_type == ".":
-                    char = "L"  # Land (Qum/Tekislik)
-                    char_color = (140, 110, 70)
+                    char, char_color = "L", (140, 110, 70)
                 elif tile_type == "♠":
-                    char = "F"  # Forest (O'rmon)
-                    char_color = (10, 70, 10)
+                    char, char_color = "F", (10, 70, 10)
                 elif tile_type == "▲":
-                    char = "M"  # Mountain (Tog')
-                    char_color = (50, 60, 70)
+                    char, char_color = "M", (50, 60, 70)
                 
-                # Simvol matnini render qilib, katakning qoq markaziga joylashtiramiz
                 char_surface = symbol_font.render(char, True, char_color)
                 text_x = X_OFFSET + x * TILE_SIZE + (TILE_SIZE - char_surface.get_width()) // 2
                 text_y = Y_OFFSET + y * TILE_SIZE + (TILE_SIZE - char_surface.get_height()) // 2
@@ -170,17 +201,16 @@ def main():
         # Dynamic Pastki UI Panel
         pygame.draw.rect(screen, (15, 15, 15), (0, SCREEN_HEIGHT - UI_HEIGHT, SCREEN_WIDTH, UI_HEIGHT))
         
-        # Matnlar va inventar holati
         status_text = f"❤️ HP: {hp}/100   |   🍖 Hunger: {hunger}/100   |   🍓 Berries: {inventory['berries']}   |   🐟 Fish: {inventory['fish']}"
         ui_status = font.render(status_text, True, (240, 240, 240))
         ui_event = font.render(current_event, True, (0, 255, 150) if "ate" in current_event or "caught" in current_event else (255, 255, 255))
-        ui_control = font.render("Controls: WASD - Move | E - Eat | ESC - Exit", True, (150, 150, 150))
+        ui_control = font.render(f"Seed: {user_seed} | WASD - Move | E - Eat | ESC - Exit", True, (150, 150, 150))
         
         screen.blit(ui_status, (40, SCREEN_HEIGHT - UI_HEIGHT + 20))
         screen.blit(ui_event, (40, SCREEN_HEIGHT - UI_HEIGHT + 55))
-        screen.blit(ui_control, (SCREEN_WIDTH - 450, SCREEN_HEIGHT - UI_HEIGHT + 20))
+        screen.blit(ui_control, (SCREEN_WIDTH - 500, SCREEN_HEIGHT - UI_HEIGHT + 20))
 
         pygame.display.flip()
-        
+
 if __name__ == "__main__":
     main()

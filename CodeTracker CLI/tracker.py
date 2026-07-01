@@ -35,3 +35,9 @@ def log_time(task_id, minutes):
       print(f"-> {minutes} minutes added to {task['name']}.")
       return
     print("-> Task coldn't find!")
+
+def show_stats():
+  data = load_data()
+  print("\n=== Progress report ===")
+  for task in data["tasks"]:
+    print(f"[{task['id']}] {task['name']} ({task['category']}) - {task['total_minutes']} min")

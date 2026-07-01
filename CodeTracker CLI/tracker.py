@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 DB_FILE = "data.json"
 
@@ -36,8 +37,23 @@ def log_time(task_id, minutes):
       return
     print("-> Task coldn't find!")
 
+
 def show_stats():
   data = load_data()
   print("\n=== Progress report ===")
   for task in data["tasks"]:
     print(f"[{task['id']}] {task['name']} ({task['category']}) - {task['total_minutes']} min")
+
+
+if __name__ == "__main__":
+  if len(sys.argv) < 2:
+    print("Commands: add, log, stats")
+    sys.exit()
+
+  cmd = sys.argv[1]
+  if cmd == "add":
+    add_task(sys.argv[2], sys.argv[3])
+  elif cmd == "log":
+    log_time(int(sys.argv[2]), int(sys.argv[3]))
+  elif cmd == "stats":
+    show_stats()

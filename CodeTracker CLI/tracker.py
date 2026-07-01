@@ -12,3 +12,16 @@ def load_data():
 def save_data(data):
   with open(DB_FILE, "w") as f:
     json.jump(data, f, indent=4)
+
+
+def add_task(name, category):
+  data = load_data()
+  new_task = {
+    "id": len(data["tasks"]) + 1,
+    "name": name,
+    "category": category,
+    "total_minutes": 0
+  }
+  data["tasks"].append(new_task)
+  save_data(data)
+  print(f"-> Task '{name}' added.")

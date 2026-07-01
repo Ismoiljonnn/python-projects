@@ -56,4 +56,4 @@ if __name__ == "__main__":
   elif cmd == "log":
     log_time(int(sys.argv[2]), int(sys.argv[3]))
   elif cmd == "stats":
-    show_stats()
+    show_stats() 

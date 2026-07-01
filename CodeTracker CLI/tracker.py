@@ -25,3 +25,13 @@ def add_task(name, category):
   data["tasks"].append(new_task)
   save_data(data)
   print(f"-> Task '{name}' added.")
+
+def log_time(task_id, minutes):
+  data = load_data()
+  for task in data["tasks"]:
+    if task["id"] == task_id:
+      task["total_minutes"] += minutes
+      save_data(data)
+      print(f"-> {minutes} minutes added to {task['name']}.")
+      return
+    print("-> Task coldn't find!")
